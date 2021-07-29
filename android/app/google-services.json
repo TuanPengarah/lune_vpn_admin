@@ -1,0 +1,84 @@
+{
+  "project_info": {
+    "project_number": "728682371792",
+    "project_id": "lune-vpn-e6d12",
+    "storage_bucket": "lune-vpn-e6d12.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728682371792:android:b68d1bcb0c884a4cef5cd5",
+        "android_client_info": {
+          "package_name": "com.lune.lune_vpn_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728682371792-h9pft35g4om9kurbr55i70o4n9f4mbls.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lune.lune_vpn_admin",
+            "certificate_hash": "7ff984d9b6c8f875c3c07a01fa3b91ce7d4fd1cc"
+          }
+        },
+        {
+          "client_id": "728682371792-6f30ltdr25r2sjvtjl88diovata11c0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEMd0skbSGSZXWHDoIRwWtWt4fCXFHDGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728682371792-6f30ltdr25r2sjvtjl88diovata11c0n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728682371792:android:495be73270a924caef5cd5",
+        "android_client_info": {
+          "package_name": "com.lune.lune_vpn_agent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728682371792-77pnf8savucvskdqd8jdi04ee20rek37.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lune.lune_vpn_agent",
+            "certificate_hash": "7ff984d9b6c8f875c3c07a01fa3b91ce7d4fd1cc"
+          }
+        },
+        {
+          "client_id": "728682371792-6f30ltdr25r2sjvtjl88diovata11c0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEMd0skbSGSZXWHDoIRwWtWt4fCXFHDGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728682371792-6f30ltdr25r2sjvtjl88diovata11c0n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

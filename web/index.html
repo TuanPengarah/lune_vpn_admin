@@ -1,8 +1,3 @@
-  <picture id="splash">
-    <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
-    <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
-    <img class="center" src="splash/img/light-1x.png" />
-  </picture>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,6 +28,30 @@
   <link rel="stylesheet" type="text/css" href="splash/style.css">
 </head>
 <body>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <!-- Firebase Configuration -->
+  <script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyC3zPvm0t7NxRQnOjm3qVlQGoXCUQhGWt0",
+    authDomain: "lune-vpn-e6d12.firebaseapp.com",
+    projectId: "lune-vpn-e6d12",
+    storageBucket: "lune-vpn-e6d12.appspot.com",
+    messagingSenderId: "728682371792",
+    appId: "1:728682371792:web:f7a60c50a66fb534ef5cd5",
+    measurementId: "G-4MYE8PK8CH"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
@@ -101,4 +120,9 @@
     }
   </script>
 </body>
+<picture id="splash">
+  <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
+  <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
+  <img class="center" src="splash/img/light-1x.png" />
+</picture>
 </html>
