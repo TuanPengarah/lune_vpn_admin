@@ -25,7 +25,7 @@ jobs:
       - name: Deploy Firebase Hosting
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:lune-vpn-e6d12
+          args: deploy --only hosting:admin-lune-vpn
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LUNE_VPN_E6D12 }}
           PROJECT_PATH: ./
