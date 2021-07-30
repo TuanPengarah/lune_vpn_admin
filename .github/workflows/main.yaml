@@ -27,7 +27,7 @@ jobs:
         with:
           args: deploy --only hosting:admin-lune-vpn
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LUNE_VPN_E6D12 }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           PROJECT_PATH: ./
 
       # Trying Build APK
