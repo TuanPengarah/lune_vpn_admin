@@ -29,9 +29,3 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           PROJECT_PATH: ./
-
-      # Trying Build APK
-      - name: Build Apk
-        run: |
-          flutter build apk --release
-        working-directory: ./

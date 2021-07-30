@@ -2,6 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:intl/intl.dart';
+import 'package:lune_vpn_admin/dialog/global_dialog.dart';
+import 'package:lune_vpn_admin/provider/current_user.dart';
+import 'package:lune_vpn_admin/provider/firestore_services.dart';
+import 'package:lune_vpn_admin/screen/news/news_add.dart';
+import 'package:provider/provider.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -11,6 +17,8 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  final _dateFormat = DateFormat('d/MM/yyyy hh:mm a');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +35,7 @@ class _NewsPageState extends State<NewsPage> {
                 StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('News')
+                        .orderBy('Tarikh', descending: true)
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -41,8 +50,49 @@ class _NewsPageState extends State<NewsPage> {
                           ),
                         );
                       }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        context.read<CurrentUser>().newsSet(0);
+                        return Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height / 1.2,
+                            alignment: Alignment.center,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.feed,
+                                    color: Colors.grey,
+                                    size: 120,
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                      'You can create News by pressing + '
+                                      'icon',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ))
+                                ]),
+                          ),
+                        );
+                      }
                       return Column(
                         children: snapshot.data!.docs.map((doc) {
+                          context
+                              .read<CurrentUser>()
+                              .newsSet(snapshot.data!.docs.length);
+                          String convertTimeStamp() {
+                            try {
+                              Timestamp _timeStamp = doc['Tarikh'];
+                              var _convert = _timeStamp.toDate();
+                              return _dateFormat.format(_convert).toString();
+                            } catch (e) {
+                              print(e);
+                              return e.toString();
+                            }
+                          }
+
                           return Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -61,7 +111,7 @@ class _NewsPageState extends State<NewsPage> {
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      doc['Tarikh'],
+                                      convertTimeStamp().toString(),
                                       style: TextStyle(
                                         color: Colors.grey,
                                         fontSize: 12,
@@ -84,6 +134,7 @@ class _NewsPageState extends State<NewsPage> {
                               expanded: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(doc['Content']),
                                     Container(
@@ -93,7 +144,14 @@ class _NewsPageState extends State<NewsPage> {
                                           Icons.delete,
                                           color: Colors.grey,
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showGlobalDialog(context, () async {
+                                            await context
+                                                .read<FirestoreService>()
+                                                .deleteNews(doc.id);
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
                                       ),
                                     ),
                                   ],
@@ -117,9 +175,10 @@ class _NewsPageState extends State<NewsPage> {
                         }).toList(),
                       );
                     }),
+                SizedBox(height: 100),
               ],
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: SpeedDial(
@@ -136,7 +195,10 @@ class _NewsPageState extends State<NewsPage> {
         ),
         icon: Icons.add,
         onPress: () {
-          setState(() {});
+          setState(() {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (c) => NewsAdd()));
+          });
         },
       ),
     );

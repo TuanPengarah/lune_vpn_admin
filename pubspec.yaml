@@ -33,6 +33,7 @@ dependencies:
 
   #Model Data
   string_validator: ^0.3.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

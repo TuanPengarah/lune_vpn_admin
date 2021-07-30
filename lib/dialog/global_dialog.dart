@@ -1,45 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:lune_vpn_admin/provider/auth_services.dart';
 import 'package:ndialog/ndialog.dart';
-import 'package:provider/provider.dart';
 
-Future<bool?> showLogoutDialog(BuildContext context) async {
-  bool? isLogout = false;
+Future<void> showGlobalDialog(
+    BuildContext context, Function() onPressed) async {
   AlertDialog alert = AlertDialog(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
-    title: Text('Log Out'),
-    content: Text('Are you sure want to log out?'),
+    title: Text('Proceed with caution!'),
+    content: Text('Are you sure want to perform this action?'),
     actions: [
       TextButton(
         child: Text(
           'Cancel',
           style: TextStyle(
             fontWeight: FontWeight.w800,
+            color: Colors.red,
           ),
         ),
         onPressed: () {
-          isLogout = false;
           Navigator.of(context).pop();
         },
       ),
       TextButton(
         child: Text(
-          'Sign Out',
+          'Continue',
           style: TextStyle(
             fontWeight: FontWeight.w800,
-            color: Colors.red,
+            color: Theme.of(context).primaryColor,
           ),
         ),
-        onPressed: () async {
-          print('signing out...');
-          isLogout = true;
-          await context
-              .read<AuthenticationServices>()
-              .signOut()
-              .then((value) => Navigator.of(context).pop());
-        },
+        onPressed: onPressed,
       ),
     ],
   );
@@ -47,5 +38,4 @@ Future<bool?> showLogoutDialog(BuildContext context) async {
     blur: 6,
     dialog: alert,
   ).show(context);
-  return isLogout;
 }

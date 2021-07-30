@@ -1,9 +1,11 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lune_vpn_admin/provider/auth_services.dart';
 import 'package:lune_vpn_admin/provider/current_user.dart';
+import 'package:lune_vpn_admin/provider/firestore_services.dart';
 import 'package:lune_vpn_admin/screen/home/home.dart';
 import 'package:lune_vpn_admin/services/theme_data.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +40,11 @@ class MyApp extends StatelessWidget {
                 create: (context) =>
                     AuthenticationServices(FirebaseAuth.instance),
               ),
-              ChangeNotifierProvider<CurrentUser>(
-                  create: (context) => CurrentUser())
+              Provider<CurrentUser>(create: (context) => CurrentUser()),
+              Provider<FirestoreService>(
+                create: (context) =>
+                    FirestoreService(FirebaseFirestore.instance),
+              ),
             ],
             builder: (context, snapshot) {
               return MaterialApp(

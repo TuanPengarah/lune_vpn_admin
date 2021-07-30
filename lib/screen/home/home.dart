@@ -8,6 +8,7 @@ import 'package:lune_vpn_admin/dialog/logout_dialog.dart';
 import 'package:lune_vpn_admin/main.dart';
 import 'package:lune_vpn_admin/provider/auth_services.dart';
 import 'package:lune_vpn_admin/provider/current_user.dart';
+import 'package:lune_vpn_admin/screen/customer/customer_page.dart';
 import 'package:lune_vpn_admin/screen/home/ui/card_admin.dart';
 import 'package:lune_vpn_admin/screen/home/ui/header.dart';
 import 'package:lune_vpn_admin/screen/news/news_page.dart';
@@ -25,34 +26,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? _user = FirebaseAuth.instance.currentUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
-  int _newsLength = 0;
-  int _customerLength = 0;
-  int _ordersLength = 0;
-  int _problemsLength = 0;
-  int _filesLength = 0;
+
   String? _myName = 'Loading';
   bool _doneCheck = false;
 
   Future<void> getLengthDocs() async {
-    await _db
-        .collection('News')
-        .get()
-        .then((snapshot) => _newsLength = snapshot.docs.length);
-    await _db
-        .collection('Agent')
-        .get()
-        .then((snapshot) => _customerLength = snapshot.docs.length);
-    await _db
-        .collection('Order')
-        .get()
-        .then((snapshot) => _ordersLength = snapshot.docs.length);
-    await _db
-        .collection('userReport')
-        .get()
-        .then((snapshot) => _problemsLength = snapshot.docs.length);
+    print('initiate refresh list');
+    await _db.collection('News').get().then((snapshot) =>
+        context.read<CurrentUser>().newsSet(snapshot.docs.length));
+    await _db.collection('Agent').get().then((snapshot) =>
+        context.read<CurrentUser>().customerSet(snapshot.docs.length));
+    await _db.collection('Order').get().then((snapshot) =>
+        context.read<CurrentUser>().orderSet(snapshot.docs.length));
+    await _db.collection('userReport').get().then((snapshot) =>
+        context.read<CurrentUser>().reportSet(snapshot.docs.length));
     await FirebaseStorage.instance.ref('ovpn/').listAll().then((value) {
       setState(() {
-        _filesLength = value.items.length;
+        context.read<CurrentUser>().fileSet(value.items.length);
       });
     });
   }
@@ -60,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool? _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    int _newsLength = context.watch<CurrentUser>().currentNews;
+    int _customerLength = context.watch<CurrentUser>().currentCustomer;
+    int _ordersLength = context.watch<CurrentUser>().currentOrder;
+    int _problemsLength = context.watch<CurrentUser>().currentReport;
+    int _filesLength = context.watch<CurrentUser>().currentVPN;
     return Scaffold(
       body: StreamBuilder(
         stream: _db.collection('UserAdmin').doc(_user!.uid).snapshots(),
@@ -128,19 +123,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () async {
                             messengerKey.currentState!.removeCurrentSnackBar();
                             await Future.delayed(Duration(milliseconds: 250));
-                            Navigator.push(
+                            await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => NewsPage()));
+                            setState(() {});
                           },
                         ),
                         cardAdmin(
                           title: 'Customer',
                           total: _customerLength,
                           icon: Icons.person,
-                          color: Colors.orangeAccent,
-                          onPressed: () {
+                          color: Colors.deepOrangeAccent,
+                          onPressed: () async {
                             messengerKey.currentState!.removeCurrentSnackBar();
+                            await Future.delayed(Duration(milliseconds: 250));
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CustomerPage()));
+                            setState(() {});
                           },
                         ),
                         cardAdmin(
@@ -148,15 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           total: _ordersLength,
                           icon: Icons.ballot,
                           color: Colors.lightGreen,
-                          onPressed: () {
-                            messengerKey.currentState!.removeCurrentSnackBar();
-                          },
-                        ),
-                        cardAdmin(
-                          title: 'Report',
-                          total: _problemsLength,
-                          icon: Icons.bug_report,
-                          color: Colors.red,
                           onPressed: () {
                             messengerKey.currentState!.removeCurrentSnackBar();
                           },
@@ -170,8 +163,25 @@ class _HomeScreenState extends State<HomeScreen> {
                             messengerKey.currentState!.removeCurrentSnackBar();
                           },
                         ),
+                        cardAdmin(
+                          title: 'Report',
+                          total: _problemsLength,
+                          icon: Icons.bug_report,
+                          color: Colors.red,
+                          onPressed: () {
+                            messengerKey.currentState!.removeCurrentSnackBar();
+                          },
+                        ),
                       ],
                     ),
+                    SizedBox(height: 50),
+                    Text(
+                      'Lune VPN Admin 0.5',
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
