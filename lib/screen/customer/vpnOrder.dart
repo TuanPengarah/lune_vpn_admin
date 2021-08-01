@@ -76,15 +76,15 @@ Widget vpnOrderPage(String? uid) {
                         ],
                       ),
                       SizedBox(height: 5),
-                      information(
+                      _information(
                         Icons.timer,
                         doc['Duration'],
                       ),
                       _status == 'Active'
-                          ? information(Icons.date_range,
+                          ? _information(Icons.date_range,
                               '${DateFormat('d/MM/yyyy').format(doc['timeStamp']!.toDate()).toString()} - ${doc['VPN end']}')
                           : Container(),
-                      information(Icons.location_on, doc['serverLocation']),
+                      _information(Icons.location_on, doc['serverLocation']),
                       Column(
                         children: [
                           Row(
@@ -137,7 +137,7 @@ Widget vpnOrderPage(String? uid) {
   );
 }
 
-Widget information(IconData icon, String title) {
+Widget _information(IconData icon, String title) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Row(

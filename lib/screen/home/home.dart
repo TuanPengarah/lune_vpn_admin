@@ -12,6 +12,7 @@ import 'package:lune_vpn_admin/screen/customer/customer_page.dart';
 import 'package:lune_vpn_admin/screen/home/ui/card_admin.dart';
 import 'package:lune_vpn_admin/screen/home/ui/header.dart';
 import 'package:lune_vpn_admin/screen/news/news_page.dart';
+import 'package:lune_vpn_admin/screen/order/order_page.dart';
 import 'package:lune_vpn_admin/snackbar/error_snackbar.dart';
 import 'package:lune_vpn_admin/snackbar/success_snackbar.dart';
 import 'package:provider/provider.dart';
@@ -150,8 +151,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           total: _ordersLength,
                           icon: Icons.ballot,
                           color: Colors.lightGreen,
-                          onPressed: () {
+                          onPressed: () async {
                             messengerKey.currentState!.removeCurrentSnackBar();
+                            await Future.delayed(Duration(milliseconds: 250));
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OrderPage()));
+                            setState(() {});
                           },
                         ),
                         cardAdmin(

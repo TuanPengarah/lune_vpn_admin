@@ -99,7 +99,9 @@ class CustomerPage extends StatelessWidget {
                     }
 
                     if (snapshot.data!.docs.isEmpty) {
-                      context.read<CurrentUser>().customerSet(0);
+                      if (isAll == true) {
+                        context.read<CurrentUser>().customerSet(0);
+                      }
                       return NoData(
                         icon: Icons.person_off,
                         reason: 'No user found, You can create new user by '

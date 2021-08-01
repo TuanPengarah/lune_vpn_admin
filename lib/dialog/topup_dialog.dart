@@ -32,7 +32,7 @@ Future<int?> showTopupDialog(BuildContext context, String? uid) async {
           'Cancel',
           style: TextStyle(
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: Colors.red,
           ),
         ),
         onPressed: () {
@@ -66,7 +66,7 @@ Future<int?> showTopupDialog(BuildContext context, String? uid) async {
               customProgress.dismiss();
               newMoney = value;
               showSuccessSnackBar(
-                  'User has been topup RM${_topupController.text}. E-Wallet balanced RM$value',
+                  'User has been topup RM${_topupController.text}. Current    balanced RM$value',
                   3);
               Navigator.of(context).pop();
             });
