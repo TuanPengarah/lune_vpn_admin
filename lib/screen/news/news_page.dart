@@ -7,6 +7,7 @@ import 'package:lune_vpn_admin/dialog/global_dialog.dart';
 import 'package:lune_vpn_admin/provider/current_user.dart';
 import 'package:lune_vpn_admin/provider/firestore_services.dart';
 import 'package:lune_vpn_admin/screen/news/news_add.dart';
+import 'package:lune_vpn_admin/ui/no_data.dart';
 import 'package:provider/provider.dart';
 
 class NewsPage extends StatefulWidget {
@@ -53,28 +54,9 @@ class _NewsPageState extends State<NewsPage> {
 
                       if (snapshot.data!.docs.isEmpty) {
                         context.read<CurrentUser>().newsSet(0);
-                        return Center(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height / 1.2,
-                            alignment: Alignment.center,
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.feed,
-                                    color: Colors.grey,
-                                    size: 120,
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                      'You can create News by pressing + '
-                                      'icon',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                      ))
-                                ]),
-                          ),
+                        return NoData(
+                          icon: Icons.feed,
+                          reason: 'You can create news by pressing + icon',
                         );
                       }
                       return Column(

@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int _filesLength = context.watch<CurrentUser>().currentVPN;
     return Scaffold(
       body: StreamBuilder(
-        stream: _db.collection('UserAdmin').doc(_user!.uid).snapshots(),
+        stream: _db.collection('userAdmin').doc(_user!.uid).snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (!snapshot.hasData) {
