@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:lune_vpn_admin/dialog/remarks_dialog.dart';
+import 'package:lune_vpn_admin/provider/current_user.dart';
 import 'package:lune_vpn_admin/provider/firestore_services.dart';
 import 'package:lune_vpn_admin/snackbar/error_snackbar.dart';
 import 'package:lune_vpn_admin/snackbar/success_snackbar.dart';
@@ -11,6 +12,40 @@ import 'package:ndialog/ndialog.dart';
 import 'package:provider/provider.dart';
 
 class OrderPage extends StatelessWidget {
+  ///CANCELING ORDER
+  void _cancelOrder({
+    required BuildContext context,
+    required String value,
+    required String userUID,
+    required String vpnUID,
+  }) async {
+    final customProgress =
+        CustomProgressDialog(context, blur: 6, dismissable: false);
+    customProgress.setLoadingWidget(
+      showLoadingProgress(
+        context,
+        'Cancelling Order...',
+      ),
+    );
+    customProgress.show();
+    await context
+        .read<FirestoreService>()
+        .canceledOrder(
+          vpnUID: vpnUID,
+          userUID: userUID,
+          reason: value,
+        )
+        .then((s) {
+      if (s == 'operation-completed') {
+        customProgress.dismiss();
+        showSuccessSnackBar('Order has been canceled', 2);
+      } else {
+        customProgress.dismiss();
+        showErrorSnackBar('Aw Snap, an error occured: $s', 3);
+      }
+    });
+  }
+
   void _acceptOrder({
     required BuildContext context,
     required String value,
@@ -88,6 +123,7 @@ class OrderPage extends StatelessWidget {
             );
           }
           if (snapshot.data!.docs.isEmpty) {
+            context.read<CurrentUser>().orderSet(0);
             return NoData(
               reason: 'No order found!',
             );
@@ -98,6 +134,9 @@ class OrderPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: snapshot.data!.docs.map((doc) {
+                  context
+                      .read<CurrentUser>()
+                      .orderSet(snapshot.data!.docs.length);
                   int? _harga = doc['Harga'];
                   return Card(
                     child: ExpandablePanel(
@@ -145,7 +184,19 @@ class OrderPage extends StatelessWidget {
                                   Colors.red,
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                showRemarksDialog(context, 'Duit tak cukup',
+                                        'to cancel this order')
+                                    .then((v) {
+                                  if (v != null) {
+                                    _cancelOrder(
+                                        context: context,
+                                        value: v,
+                                        userUID: doc['userUID'],
+                                        vpnUID: doc['vpnUID']);
+                                  }
+                                });
+                              },
                               icon: Icon(Icons.cancel),
                               label: Text('Cancel Order'),
                             ),

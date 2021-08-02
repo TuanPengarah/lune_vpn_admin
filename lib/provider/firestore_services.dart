@@ -153,4 +153,39 @@ class FirestoreService extends ChangeNotifier {
 
     return status;
   }
+
+  Future<String?> canceledOrder({
+    required String vpnUID,
+    required String userUID,
+    required String reason,
+  }) async {
+    String? status;
+
+    //update on user vpn status
+
+    Map<String, dynamic> updateData = {
+      'Status': 'Canceled',
+      'isPending': false,
+      'isPay': false,
+      'Remarks': reason,
+      'timeStamp': FieldValue.serverTimestamp(),
+    };
+
+    await _firestore
+        .collection('Agent')
+        .doc(userUID)
+        .collection('Order')
+        .doc(vpnUID)
+        .update(updateData)
+        .then((value) async {
+      //deleted on order list
+      await _firestore
+          .collection('Order')
+          .doc(vpnUID)
+          .delete()
+          .then((value) => status = 'operation-completed');
+    }).catchError((error) => status = error);
+
+    return status;
+  }
 }

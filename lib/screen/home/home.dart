@@ -9,6 +9,7 @@ import 'package:lune_vpn_admin/main.dart';
 import 'package:lune_vpn_admin/provider/auth_services.dart';
 import 'package:lune_vpn_admin/provider/current_user.dart';
 import 'package:lune_vpn_admin/screen/customer/customer_page.dart';
+import 'package:lune_vpn_admin/screen/files/files_page.dart';
 import 'package:lune_vpn_admin/screen/home/ui/card_admin.dart';
 import 'package:lune_vpn_admin/screen/home/ui/header.dart';
 import 'package:lune_vpn_admin/screen/news/news_page.dart';
@@ -166,8 +167,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           total: _filesLength,
                           icon: Icons.upload_file,
                           color: Colors.blueGrey,
-                          onPressed: () {
+                          onPressed: () async {
                             messengerKey.currentState!.removeCurrentSnackBar();
+                            await Future.delayed(Duration(milliseconds: 250));
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FilesPage(),
+                              ),
+                            );
+                            setState(() {});
                           },
                         ),
                         cardAdmin(
