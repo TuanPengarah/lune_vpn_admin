@@ -74,19 +74,47 @@ Future<bool> showUploadSheetWeb(
                       ),
                     ),
                     onPressed: () async {
-                      customProgress.setLoadingWidget(
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 10),
-                            Text('Uploading...'),
-                          ],
-                        ),
-                      );
                       task = StorageAPI.uploadBytes(filePath, bytes);
                       if (task == null) return;
+                      customProgress.setLoadingWidget(
+                        StreamBuilder<TaskSnapshot>(
+                            stream: task!.snapshotEvents,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final snap = snapshot.data!;
+                                final progress =
+                                    snap.bytesTransferred / snap.totalBytes;
+                                final percentage =
+                                    (progress * 100).toStringAsFixed(2);
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      backgroundColor: Colors.grey,
+                                      value: progress,
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Uploading $percentage%',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Center(
+                                  child: Text(
+                                    'Uploading...',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }),
+                      );
                       customProgress.show();
                       final snapshot = await task!.whenComplete(() {});
                       final urlDownload = await snapshot.ref.getDownloadURL();

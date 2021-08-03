@@ -29,83 +29,110 @@ Future<bool> showUploadSheet(
       final customProgress =
           CustomProgressDialog(context, blur: 6, dismissable: false);
       return Material(
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                Text(
-                  'Do you want to upload this file?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: SingleChildScrollView(
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              Text(
+                'Do you want to upload this file?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 30),
-                Icon(
-                  Icons.insert_drive_file,
-                  color: Colors.grey,
-                  size: 60,
+              ),
+              SizedBox(height: 30),
+              Icon(
+                Icons.insert_drive_file,
+                color: Colors.grey,
+                size: 60,
+              ),
+              SizedBox(height: 10),
+              Text(
+                fileName,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 30),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.blueGrey),
                 ),
-                SizedBox(height: 10),
-                Text(
-                  fileName,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ),
-                SizedBox(
-                  width: 280,
-                  height: 45,
-                  child: ElevatedButton(
-                    child: Text('Upload this file'),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.blueGrey,
-                      ),
+              ),
+              SizedBox(
+                width: 280,
+                height: 45,
+                child: ElevatedButton(
+                  child: Text('Upload this file'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.blueGrey,
                     ),
-                    onPressed: () async {
-                      customProgress.setLoadingWidget(
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 10),
-                            Text('Uploading...'),
-                          ],
-                        ),
-                      );
-                      task = StorageAPI.uploadFile(file, filePath);
-                      if (task == null) return;
-                      customProgress.show();
-                      final snapshot = await task!.whenComplete(() {});
-                      final urlDownload = await snapshot.ref.getDownloadURL();
-                      print('upload completed: $urlDownload');
-                      isUpload = true;
-                      customProgress.dismiss();
-
-                      Navigator.of(context).pop();
-                      showSuccessSnackBar('Upload Completed!', 2);
-                    },
                   ),
-                )
-              ],
-            ),
+                  onPressed: () async {
+                    task = StorageAPI.uploadFile(file, filePath);
+                    if (task == null) return;
+                    customProgress.setLoadingWidget(
+                      StreamBuilder<TaskSnapshot>(
+                          stream: task!.snapshotEvents,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final snap = snapshot.data!;
+                              final progress =
+                                  snap.bytesTransferred / snap.totalBytes;
+                              final percentage =
+                                  (progress * 100).toStringAsFixed(2);
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    backgroundColor: Colors.grey,
+                                    value: progress,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Uploading $percentage%',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Center(
+                                child: Text(
+                                  'Uploading...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }
+                          }),
+                    );
+                    customProgress.show();
+                    final snapshot = await task!.whenComplete(() {});
+                    final urlDownload = await snapshot.ref.getDownloadURL();
+                    print('upload completed: $urlDownload');
+                    isUpload = true;
+                    customProgress.dismiss();
+
+                    Navigator.of(context).pop();
+                    showSuccessSnackBar('Upload Completed!', 2);
+                  },
+                ),
+              )
+            ],
           ),
         ),
-      );
+      ));
     },
   );
   return isUpload;

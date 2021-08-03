@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:ndialog/ndialog.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FilesPage extends StatefulWidget {
   const FilesPage({Key? key}) : super(key: key);
@@ -181,12 +182,12 @@ class _FilesPageState extends State<FilesPage> {
                                       Container(
                                         width: double.infinity,
                                         child: Center(
-                                          child: Wrap(
-                                            spacing: 10,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             children: [
-                                              SizedBox(
-                                                width: 120,
-                                                child: ElevatedButton.icon(
+                                              IconButton(
+                                                  tooltip: 'Delete',
                                                   onPressed: () {
                                                     deletedFiles(
                                                       context,
@@ -196,54 +197,26 @@ class _FilesPageState extends State<FilesPage> {
                                                       file.name,
                                                     );
                                                   },
-                                                  icon: Icon(Icons.delete),
-                                                  label: Text('Delete'),
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                Colors.red),
-                                                  ),
-                                                ),
+                                                  icon: Icon(Icons.delete)),
+                                              IconButton(
+                                                tooltip: 'Share',
+                                                onPressed: () async {
+                                                  kIsWeb == false
+                                                      ? await StorageAPI
+                                                          .downloadFile(
+                                                              file.ref)
+                                                      : Share.share(
+                                                          '${file.url}');
+                                                },
+                                                icon: Icon(Icons.share),
                                               ),
-                                              kIsWeb
-                                                  ? Container()
-                                                  : SizedBox(
-                                                      width: 120,
-                                                      child:
-                                                          ElevatedButton.icon(
-                                                        onPressed: () async {
-                                                          await StorageAPI
-                                                              .downloadFile(
-                                                                  file.ref);
-                                                        },
-                                                        icon: Icon(Icons.share),
-                                                        label: Text('Share'),
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(Colors
-                                                                      .blueGrey),
-                                                        ),
-                                                      ),
-                                                    ),
-                                              SizedBox(width: 10),
-                                              SizedBox(
-                                                width: 130,
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () async {
-                                                    StorageAPI.launchWeb(
-                                                        file.url);
-                                                  },
-                                                  icon: Icon(Icons.download),
-                                                  label: Text('Download'),
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(Colors
-                                                                .blueGrey),
-                                                  ),
-                                                ),
+                                              IconButton(
+                                                tooltip: 'Download',
+                                                onPressed: () async {
+                                                  StorageAPI.launchWeb(
+                                                      file.url);
+                                                },
+                                                icon: Icon(Icons.download),
                                               ),
                                             ],
                                           ),
@@ -316,8 +289,8 @@ class _FilesPageState extends State<FilesPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.note_add),
-                              SizedBox(width: 5),
+                              Icon(Icons.note_add, color: Colors.white),
+                              SizedBox(width: 10),
                               Text(
                                 'Add VPN Files',
                                 style: TextStyle(
