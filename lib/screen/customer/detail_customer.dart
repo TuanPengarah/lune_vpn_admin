@@ -3,6 +3,7 @@ import 'package:lune_vpn_admin/dialog/global_dialog.dart';
 import 'package:lune_vpn_admin/dialog/topup_dialog.dart';
 import 'package:lune_vpn_admin/provider/firestore_services.dart';
 import 'package:lune_vpn_admin/screen/customer/vpnOrder.dart';
+import 'package:lune_vpn_admin/screen/report/bottom_bar.dart';
 import 'package:lune_vpn_admin/snackbar/error_snackbar.dart';
 import 'package:lune_vpn_admin/snackbar/success_snackbar.dart';
 import 'package:share_plus/share_plus.dart';
@@ -56,15 +57,6 @@ class _CustomerDetailsState extends State<CustomerDetails> {
     final url =
         "mailto:${widget.email}?subject=Pemberitahuan daripada Lune VPN&body=Salam "
         "${widget.name},";
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      showErrorSnackBar('Cannot launch url $url', 2);
-    }
-  }
-
-  void _launchCaller() async {
-    final url = "tel:${widget.phone}";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -134,9 +126,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                   leading: Icon(Icons.person),
                   title: Text('Name'),
                   subtitle: Text('${widget.name}'),
-                  onTap: () {
-                    Share.share('${widget.name}');
-                  },
+                  onTap: () {},
                 ),
               ),
               Card(
@@ -145,7 +135,11 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                   title: Text('Phone Number'),
                   subtitle: Text('${widget.phone}'),
                   onTap: () {
-                    _launchCaller();
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) =>
+                          bottomBar(widget.name, widget.phone),
+                    );
                   },
                 ),
               ),

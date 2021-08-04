@@ -1,7 +1,9 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:lune_vpn_admin/dialog/logout_dialog.dart';
@@ -32,6 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? _myName = 'Loading';
   bool _doneCheck = false;
+  String? _devices = 'Flutter';
+
+  Future<void> _checkDevice() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (kIsWeb) {
+      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+      _devices = '${webBrowserInfo.platform} | ${webBrowserInfo.product}';
+    } else {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      _devices = '${androidInfo.brand} | ${androidInfo.model}';
+    }
+  }
 
   Future<void> getLengthDocs() async {
     print('initiate refresh list');
@@ -78,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _doneCheck = true;
               print('Welcome back admin!');
               getLengthDocs();
+              _checkDevice();
             }
           }
           return RefreshIndicator(
@@ -201,7 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 50),
                     Text(
-                      'Lune VPN Admin 0.5',
+                      'Lune VPN Admin 0.0.6\nRunning on $_devices',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey,
                       ),

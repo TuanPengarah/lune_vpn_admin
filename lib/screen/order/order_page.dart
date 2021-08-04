@@ -46,6 +46,7 @@ class OrderPage extends StatelessWidget {
     });
   }
 
+  ///ACCEPT ORDER
   void _acceptOrder({
     required BuildContext context,
     required String value,
@@ -109,7 +110,10 @@ class OrderPage extends StatelessWidget {
         backgroundColor: Colors.lightGreen,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('Order').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('Order')
+            .orderBy('timeStamp', descending: true)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(

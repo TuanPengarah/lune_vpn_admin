@@ -38,6 +38,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-functions.js"></script>
   <!-- Firebase Configuration -->
   <script>
   // Your web app's Firebase configuration
@@ -117,6 +118,7 @@
           }
         }, 4000);
       });
+      navigator.serviceWorker.register("/firebase-messaging-sw.js");
     } else {
       // Service workers not supported. Just drop the <script> tag.
       loadMainDartJs();

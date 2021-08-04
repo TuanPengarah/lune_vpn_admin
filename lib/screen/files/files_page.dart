@@ -110,12 +110,55 @@ class _FilesPageState extends State<FilesPage> {
                           SizedBox(height: 20),
                           Text('Uh Oh! Vpn files not found!'),
                           TextButton(
-                            onPressed: () {
-                              setState(() {
-                                futureFiles = StorageAPI.listAll('ovpn/');
-                              });
+                            onPressed: () async {
+                              FilePickerResult? result = await FilePicker
+                                  .platform
+                                  .pickFiles(allowMultiple: false);
+
+                              if (result != null) {
+                                PlatformFile content = result.files.first;
+                                Uint8List? fileBytes = result.files.first.bytes;
+                                //web version
+                                if (kIsWeb) {
+                                  String fileName = result.files.first.name;
+                                  await showUploadSheetWeb(
+                                          context,
+                                          'ovpn/$fileName',
+                                          content.name,
+                                          fileBytes)
+                                      .then((b) {
+                                    print(b);
+                                    if (b == true) {
+                                      setState(() {
+                                        futureFiles =
+                                            StorageAPI.listAll('ovpn/');
+                                      });
+                                    }
+                                  });
+                                  // await FirebaseStorage.instance
+                                  //     .ref('ovpn/$fileName')
+                                  //     .putData(fileBytes!);
+                                } else {
+                                  //android
+                                  final path = result.files.single.path!;
+                                  _file = File(path);
+                                  final getFile = basename(_file!.path);
+                                  final filePath = 'ovpn/$getFile';
+                                  await showUploadSheet(context, filePath,
+                                          content.name, _file!, fileBytes)
+                                      .then((b) {
+                                    print(b);
+                                    if (b == true) {
+                                      setState(() {
+                                        futureFiles =
+                                            StorageAPI.listAll('ovpn/');
+                                      });
+                                    }
+                                  });
+                                }
+                              }
                             },
-                            child: Text('Refresh'),
+                            child: Text('Add VPN files'),
                           ),
                         ],
                       ),
