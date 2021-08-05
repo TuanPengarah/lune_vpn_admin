@@ -139,14 +139,6 @@ class OrderPage extends StatelessWidget {
           'My Order List',
         ),
         backgroundColor: Colors.lightGreen,
-        actions: [
-          IconButton(
-            onPressed: () async {},
-            icon: Icon(
-              Icons.add,
-            ),
-          )
-        ],
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
