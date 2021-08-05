@@ -30,27 +30,28 @@ Widget vpnOrderPage(String? uid) {
             reason: 'This user does not order any VPN',
           );
         }
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: snapshot.data!.docs.map((doc) {
-              String? _status = doc['Status'];
-              int? _harga = doc['Harga'];
-              IconData? _statusIcon() {
-                IconData? icon;
-                if (equals('Active', _status)) {
-                  icon = Icons.done;
-                } else if (equals('Expired', _status)) {
-                  icon = Icons.error;
-                } else if (equals('Pending', _status)) {
-                  icon = Icons.pending;
-                } else if (equals('Canceled', _status)) {
-                  icon = Icons.cancel_presentation;
-                }
-                return icon;
+        return ListView(
+          physics: BouncingScrollPhysics(),
+          children: snapshot.data!.docs.map((doc) {
+            String? _status = doc['Status'];
+            int? _harga = doc['Harga'];
+            IconData? _statusIcon() {
+              IconData? icon;
+              if (equals('Active', _status)) {
+                icon = Icons.done;
+              } else if (equals('Expired', _status)) {
+                icon = Icons.error;
+              } else if (equals('Pending', _status)) {
+                icon = Icons.pending;
+              } else if (equals('Canceled', _status)) {
+                icon = Icons.cancel_presentation;
               }
+              return icon;
+            }
 
-              return Card(
+            return Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -128,9 +129,9 @@ Widget vpnOrderPage(String? uid) {
                     ],
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }).toList(),
         );
       },
     ),

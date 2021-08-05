@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:lune_vpn_admin/provider/firestore_services.dart';
 import 'package:lune_vpn_admin/snackbar/error_snackbar.dart';
@@ -62,7 +64,24 @@ Future<int?> showTopupDialog(BuildContext context, String? uid) async {
             await context
                 .read<FirestoreService>()
                 .userTopup(int.parse(_topupController.text), uid)
-                .then((value) {
+                .then((value) async {
+              FirebaseFirestore.instance
+                  .collection('Agent')
+                  .doc(uid)
+                  .get()
+                  .then((snapshot) async {
+                List<dynamic> info = snapshot.data()!['tokens'];
+                HttpsCallable call = FirebaseFunctions.instance.httpsCallable(
+                    'topupNotif',
+                    options:
+                        HttpsCallableOptions(timeout: Duration(seconds: 5)));
+                final results = await call(<String, dynamic>{
+                  'tokens': info,
+                  'value': _topupController.text,
+                  'balanced': value
+                });
+                print(results);
+              });
               customProgress.dismiss();
               newMoney = value;
               showSuccessSnackBar(
