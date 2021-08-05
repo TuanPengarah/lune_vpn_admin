@@ -116,7 +116,7 @@ class CustomerPage extends StatelessWidget {
                             context
                                 .read<CurrentUser>()
                                 .customerSet(snapshot.data!.docs.length);
-                            return Card(
+                            return Card(  
                               child: ListTile(
                                 leading: Icon(Icons.person),
                                 title: Text(
